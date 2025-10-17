@@ -19,6 +19,16 @@ print("=== Week 2 Homework: Operators, Data Types, and Lists ===")
 # How many extra bars you need to buy to complete the last box
 #----------------------------------------------------
 
+bars = 47
+per_box = 6
+
+full_boxes = bars // per_box
+leftover = bars % per_box
+extra_bars_needed = per_box - leftover
+
+print("Boxes filled:", full_boxes)
+print("Leftover bars:", leftover)
+print("Bars needed to fill box:", extra_bars_needed)
 
 # ---------------------------------------------------
 # EXERCISE 2 (easy) — String basics and indexing
@@ -29,6 +39,21 @@ print("=== Week 2 Homework: Operators, Data Types, and Lists ===")
 # Count the number of vowels in the original name (membership: in "aeiouAEIOU").
 # Print: handle + “-” + vowel_count.
 
+full_name = "Ada Lovelace"
+name_lowercase = full_name.lower()
+name_no_space = name_lowercase.replace(" ","")
+
+first_3_letters = name_no_space[0] + name_no_space[1] + name_no_space[2]
+last_2_letters = name_no_space[-1] + name_no_space[-2]
+handle = first_3_letters + last_2_letters
+
+vowels = "AEIOUaeiou"
+vowel_count = 0
+for char in full_name:
+    if char in vowels:
+        vowel_count = vowel_count + 1
+
+print("handle", handle + "-" + str(vowel_count))
 # ---------------------------------------------------
 # EXERCISE 3  — Lists: create, index, slice, modify
 # A small bus has 10 seats. "X" means taken, "_" means free.
@@ -38,6 +63,19 @@ print("=== Week 2 Homework: Operators, Data Types, and Lists ===")
 # A group of 2 arrives; reserve two consecutive free seats by scanning the list and replacing with "X"
 # A passenger leaves from the last occupied seat
 # Print the list after each step.
+
+seats = ["_", "X", "_", "_", "X", "_", "_", "_", "X"]
+print(len(seats))
+
+print(seats.count("_"))
+
+if seats[-1] == 'X':
+    last_seat = "taken"
+else:
+    last_seat = "empty"
+
+
+print(f"First seat is {seats[0]} and last seat is {last_seat}")
 
 # ---------------------------------------------------
 # EXERCISE 4 List membership & methods
