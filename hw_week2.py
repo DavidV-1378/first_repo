@@ -112,4 +112,20 @@ print("Silence in playlist:", "Silence" in playlist)
 #   - total sum
 #   - average (float); if empty, average is 0.0
 # 4) Print the cleaned list and the three numbers.
-#
+
+raw = ["10", 5, "x", 5, " 20", "12", "x", 20, "20", "7 "]
+
+cleaned_strings = map(lambda x: str(x).strip(), raw)
+numeric_strings = filter(str.isdigit, cleaned_strings)
+valid_scores = list(map(int, numeric_strings))
+
+cleaned = list(dict.fromkeys(valid_scores))
+
+count = len(cleaned)
+total = sum(cleaned)
+average = sum(cleaned) / count * bool(count)
+
+print(cleaned)
+print(count, total, average)
+
+
