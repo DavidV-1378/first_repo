@@ -48,10 +48,7 @@ last_2_letters = name_no_space[-1] + name_no_space[-2]
 handle = first_3_letters + last_2_letters
 
 vowels = "AEIOUaeiou"
-vowel_count = 0
-for char in full_name:
-    if char in vowels:
-        vowel_count = vowel_count + 1
+vowel_count = sum(char in vowels for char in full_name)
 
 print("handle", handle + "-" + str(vowel_count))
 # ---------------------------------------------------
@@ -87,6 +84,18 @@ print(f"First seat is {seats[0]} and last seat is {last_seat}")
 # Print the middle slice (exclude first and last) as the “core set.”
 # Check if "Silence" is in the playlist (membership) and print result.
 
+playlist = ["Flowers", "Thunder", "Daylight", "River", "Waves"]
+
+playlist.insert(0, "Intro")
+playlist.append("Outro")
+
+thunder_index = playlist.index("Thunder") if "Thunder" in playlist else -1
+playlist.append(playlist.pop(thunder_index)) if thunder_index != -1 else None
+
+core_set = playlist[1:-1]
+print("Core set:", core_set)
+print("Silence in playlist:", "Silence" in playlist)
+
 
 # ---------------------------------------------------
 # EXERCISE 5  — Clean a list & compute a score
@@ -103,4 +112,20 @@ print(f"First seat is {seats[0]} and last seat is {last_seat}")
 #   - total sum
 #   - average (float); if empty, average is 0.0
 # 4) Print the cleaned list and the three numbers.
-#
+
+raw = ["10", 5, "x", 5, " 20", "12", "x", 20, "20", "7 "]
+
+cleaned_strings = map(lambda x: str(x).strip(), raw)
+numeric_strings = filter(str.isdigit, cleaned_strings)
+valid_scores = list(map(int, numeric_strings))
+
+cleaned = list(dict.fromkeys(valid_scores))
+
+count = len(cleaned)
+total = sum(cleaned)
+average = sum(cleaned) / count * bool(count)
+
+print(cleaned)
+print(count, total, average)
+
+
