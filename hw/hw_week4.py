@@ -256,3 +256,65 @@ coupon = {
 #      - FINAL TOTAL
 #      - If there are invalid_lines, print them clearly with the reason.
 # 7. OPTIONAL: After successful “checkout”, reduce catalog stock by qty for each valid line and print updated stock.
+
+valid_lines = []
+invalid_lines = []
+
+for item in cart:
+    sku = item.get("sku")
+    qty = item.get("qty", 0)
+    stock = catalog[sku]["stock"]
+    name = catalog[sku]["name"]
+    price = catalog[sku]["price"]
+    if sku not in catalog:
+        invalid_lines.append({"sku": sku, "qty": qty, "reason": "wrong sku"})
+        continue
+    if qty <= 0:
+        invalid_lines.append({"sku": sku, "qty": qty, "reason": "qty must be bigger than 0"})
+        continue
+    if qty > stock:
+        invalid_lines.append({"sku": sku, "qty": qty, "reason": "qty > stock"})
+        continue
+    line_total = price * qty
+    valid_lines.append({"sku": sku, "name": name, "qty" : qty, "price": price, "line_total": line_total})
+    
+subtotal = 0.0
+for item in valid_lines:
+    subtotal += item["line_total"]
+
+coupon_applies = False
+has_coffee = False
+for item in valid_lines:
+    if item["sku"] == "COFFEE" and item["qty"] >= 2:
+        has_coffee = True
+        break
+
+coupon_applies = has_coffee or (subtotal >= 60)
+
+discount_amount = 0.0
+if coupon_applies and coupon["type"] == "percent":
+    discount_amount = subtotal * (coupon.get("value", 0) / 100)
+
+tax_base = (subtotal - discount_amount) 
+if tax_base < 0:
+    tax_base = 0.0
+tax = tax_base * tax_rate
+total = tax + tax_base
+
+print(total)
+print(discount_amount)
+print(coupon_applies)
+print(f"valid: {valid_lines}, \n invalid {invalid_lines}, \n subtotal {subtotal}")
+
+if len(valid_lines) > 0:
+    for line in valid_lines:
+        sku = item.get("sku")
+        qty = item.get("qty")
+        if catalog[sku]["stock"] - qty < 0:
+            catalog[sku]["stock"] = 0 
+        else:
+            catalog[sku]["stock"] -= qty
+
+
+
+print(catalog)
