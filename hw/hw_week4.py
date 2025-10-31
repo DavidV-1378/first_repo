@@ -29,6 +29,23 @@ budget = 50.0
 #    - Out-of-stock items (list or "None")
 #    - A line "Within budget" or "Over budget" based on over_budget.
 
+subtotal = 0
+out_of_stock = []
+
+for item in order:
+    if item["in_stock"]:
+        subtotal += item["qty"] * item["unit_price"]
+    else:
+        out_of_stock.append(item["item"])
+
+over_budget = subtotal > budget
+
+print(f"Subtotal: ${subtotal:.2f}")
+print("Out-of-stock:", out_of_stock if out_of_stock else "None")
+print("Status:", "Over budget" if over_budget else "Within budget")
+print("-" * 40)
+
+
 
 # ======================================================================
 # 2) CLASS ATTENDANCE & GRADES
@@ -40,8 +57,6 @@ students = [
     {"name": "Ioana", "present": True,  "grades": [10, 9, 10]},
     {"name": "Dan",   "present": True,  "grades": [6, 7, 8]},
 ]
-pass_threshold = 8.0
-
 # Tasks:
 # 1. For each student, compute the average grade and add it as "avg" (rounded to 2 decimals).
 # 2. Add a "status" field with values "PASS" or "RETAKE" depending on the avg vs pass_threshold.
@@ -52,6 +67,25 @@ pass_threshold = 8.0
 #    - Each student: name, avg, status
 #    - "Needs makeup": names list
 
+pass_threshold = 8.0
+
+present_count = 0
+needs_makeup = []
+
+for s in students:
+    avg = round(sum(s["grades"]) / len(s["grades"]), 2)
+    s["avg"] = avg
+    s["status"] = "PASS" if avg >= pass_threshold else "RETAKE"
+    if s["present"]:
+        present_count += 1
+    if not s["present"] or s["status"] == "RETAKE":
+        needs_makeup.append(s["name"])
+
+print("Present count:", present_count)
+for s in students:
+    print(f"{s['name']}: avg={s['avg']} status={s['status']}")
+print("Needs makeup:", needs_makeup)
+print("-" * 40)
 
 # ======================================================================
 # 3) STREAMING WATCHLIST FILTER
@@ -77,6 +111,24 @@ new_cutoff_year = 2015
 #       - all_tags
 #       - The titles of new_releases and classics (nicely formatted)
 
+to_watch = []
+for m in watchlist:
+    if m["available"] and m["rating"] >= min_rating:
+        to_watch.append(m)
+
+new_releases = [m for m in to_watch if m["year"] > new_cutoff_year]
+classics = [m for m in to_watch if m["year"] <= new_cutoff_year]
+
+all_tags = set()
+for m in to_watch:
+    for t in m["tags"]:
+        all_tags.add(t)
+
+print(f"To watch: {len(to_watch)} | New releases: {len(new_releases)} | Classics: {len(classics)}")
+print("All tags:", all_tags)
+print("New releases:", [m["title"] for m in new_releases])
+print("Classics:", [m["title"] for m in classics])
+print("-" * 40)
 
 # ======================================================================
 # 4) EXPENSE CATEGORIZER
@@ -102,6 +154,24 @@ single_expense_limit = 500
 #       - has_big_expense (True/False)
 #       - "OK" or "Over budget" based on over_budget
 
+category_totals = {}
+has_big_expense = False
+
+for e in expenses:
+    cat = e["category"]
+    category_totals[cat] = category_totals.get(cat, 0) + e["amount"]
+    if e["amount"] > single_expense_limit:
+        has_big_expense = True
+
+monthly_total = sum(category_totals.values())
+over_budget = monthly_total > monthly_budget
+
+print("=== EXPENSE SUMMARY ===")
+print("Category totals:", category_totals)
+print(f"Monthly total: ${monthly_total:.2f}")
+print("Has big expense:", has_big_expense)
+print("Status:", "Over budget" if over_budget else "OK")
+print("-" * 40)
 
 # ======================================================================
 # 5) CONTACTS DEDUPLICATOR
@@ -121,6 +191,21 @@ contacts = [
 # 3. Print:
 #    - cleaned list
 #    - removed_count
+
+seen_emails = set()
+cleaned = []
+for c in contacts:
+    if c["email"] not in seen_emails:
+        cleaned.append(c)
+        seen_emails.add(c["email"])
+
+removed_count = len(contacts) - len(cleaned)
+
+print("=== CONTACTS DEDUPLICATOR ===")
+print("Cleaned list:", cleaned)
+print("Removed count:", removed_count)
+print("-" * 40)
+
 
 
 # ======================================================================
