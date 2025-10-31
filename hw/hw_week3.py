@@ -151,10 +151,7 @@ print("Stats:", stats)
 # =========================================================
 #  MUSIC SNAPSHOT (sets + dicts)
 # =========================================================
-<<<<<<< HEAD
 
-=======
->>>>>>> 0382a3bb44cac7d59f0bafd854c26667dfcfcc3b
 #  TASKS:
 # 1. Create both = artists in both sets.
 # 2. Create all_artists = all unique artists (union).
