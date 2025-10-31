@@ -72,7 +72,8 @@ tuple(["alex", "david"]): 102,
 tuple(["cristi", "daniel"]): 103
 }
 
-print(room) months: ["january", "february", "march"]
+print(room) 
+months = ["january", "february", "march"]
 print(months[0:2])
 #tuple
 #set

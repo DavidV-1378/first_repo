@@ -140,9 +140,6 @@ print("Stats:", stats)
 #  MUSIC SNAPSHOT (sets + dicts)
 # =========================================================
 
-rock = {"Queen", "The Beatles", "Coldplay"}
-pop = {"Coldplay", "Adele", "Drake"}
-
 #  TASKS:
 # 1. Create both = artists in both sets.
 # 2. Create all_artists = all unique artists (union).
@@ -156,12 +153,12 @@ rock = {"Queen", "The Beatles", "Coldplay"}
 pop = {"Coldplay", "Adele", "Drake"}
 
 both = rock and pop
-all_artists = rock | pop
+all_artists = rock.union(pop)
 
 playlist_info = {
     "total_artists": len(all_artists),
     "common_artists": both,
-    "unique_to_pop": pop - rock
+    "unique_to_pop": pop - rock 
 }
 
 print("Playlist Info:", playlist_info)
