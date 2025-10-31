@@ -60,6 +60,13 @@ print("Summary (total_cost, number_of_items):", summary)
 #  MOVIE INFO CARDS (dicts + tuples)
 # =========================================================
 
+movie1 = {
+    "title": "Dune",
+    "year": 2021,
+    "genre": "Sci-Fi",
+    "actors": ("Timothée Chalamet", "Zendaya")
+}
+
 # TASKS:
 # 1. Add a new key "duration" = 155 to movie1.
 # 2. Create another movie (same structure) named movie2 with your own values.
@@ -106,6 +113,11 @@ print("Is Movie 1 longer than Movie 2?", longer)
 # MINI LIBRARY (dict of lists)
 # =========================================================
 
+library = {
+    "borrowed": ["Dune", "The Hobbit"],
+    "available": ["1984", "Brave New World", "Foundation"]
+}
+
 # TASKS:
 # 1. Add "Harry Potter" to available books.
 # 2. Move "1984" from available to borrowed using remove() and append().
@@ -139,7 +151,10 @@ print("Stats:", stats)
 # =========================================================
 #  MUSIC SNAPSHOT (sets + dicts)
 # =========================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0382a3bb44cac7d59f0bafd854c26667dfcfcc3b
 #  TASKS:
 # 1. Create both = artists in both sets.
 # 2. Create all_artists = all unique artists (union).
@@ -165,7 +180,6 @@ print("Playlist Info:", playlist_info)
 print("Total artists:", playlist_info["total_artists"])
 print("Common artists:", playlist_info["common_artists"])
 print("Unique to pop:", playlist_info["unique_to_pop"])
-
 
 # =========================================================
 #  WEEKEND PLAN (lists + tuples + sets + membership)

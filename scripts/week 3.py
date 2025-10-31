@@ -27,5 +27,5 @@ for student in students:
     print(student["name"], avrage,)
 
 print(max(avrages.values()), subjects)
-print("y", "maine", oxygen)
+
 #print(elements{"name"},)
