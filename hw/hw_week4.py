@@ -166,7 +166,7 @@ for e in expenses:
 monthly_total = sum(category_totals.values())
 over_budget = monthly_total > monthly_budget
 
-print("=== EXPENSE SUMMARY ===")
+
 print("Category totals:", category_totals)
 print(f"Monthly total: ${monthly_total:.2f}")
 print("Has big expense:", has_big_expense)
@@ -201,7 +201,7 @@ for c in contacts:
 
 removed_count = len(contacts) - len(cleaned)
 
-print("=== CONTACTS DEDUPLICATOR ===")
+
 print("Cleaned list:", cleaned)
 print("Removed count:", removed_count)
 print("-" * 40)
@@ -263,8 +263,9 @@ invalid_lines = []
 for item in cart:
     sku = item.get("sku")
     qty = item.get("qty", 0)
-    stock = catalog[sku]["stock"]
-    name = catalog[sku]["name"]
+    product = catalog[sku]
+    stock = product["stock"]
+    name = product["name"]
     price = catalog[sku]["price"]
     if sku not in catalog:
         invalid_lines.append({"sku": sku, "qty": qty, "reason": "wrong sku"})
@@ -306,11 +307,12 @@ print(discount_amount)
 print(coupon_applies)
 print(f"valid: {valid_lines}, \n invalid {invalid_lines}, \n subtotal {subtotal}")
 
-if len(valid_lines) > 0:
+#only reduce if there is atleast a valid item
+if len(valid_lines) > 0: 
     for line in valid_lines:
         sku = item.get("sku")
         qty = item.get("qty")
-        if catalog[sku]["stock"] - qty < 0:
+        if catalog[sku]["stock"] - qty < 0: #update catalogue stock
             catalog[sku]["stock"] = 0 
         else:
             catalog[sku]["stock"] -= qty
