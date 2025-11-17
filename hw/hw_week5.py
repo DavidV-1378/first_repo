@@ -35,6 +35,62 @@ doctors = {
 
 # Hint: for overlap, keep a list of (start, end) per doctor; check if new interval intersects any.
 
+
+valid_appointments = [] #list of valid appointments
+invalid_appointments = [] #list of invalid appointments 
+doctor_stats = {doctor: {"count": 0, "revenue": 0.0, "intervals": []} for doctor in doctors} #informtaion of doctor
+time_conflict_patients = set() #patients with time conflicts
+
+for appointment in appointments:  # go through each appointment in the list
+    patient = appointment["patient"]
+    doctor = appointment["doctor"]
+    start = appointment["start"]
+    dur = appointment["dur"]
+    insured = appointment["insured"]
+
+    if doctor not in doctors:  # check if doctor name is valid
+        invalid_appointments.append((patient, doctor, "Unknown doctor"))
+        continue  # skip to next appointment
+    if dur <= 0:  # check if duration is positive
+        invalid_appointments.append((patient, doctor, "Invalid duration"))
+        continue  # skip to next appointment
+
+    end = start + dur  # calculate end time
+    if end > doctors[doctor]["end"]:  # check if appointment goes beyond doctor's working time
+        invalid_appointments.append((patient, doctor, "Exceeds doctor time"))
+        continue  # skip to next appointment
+
+    conflict = False  # assume no conflict first
+    for (s, e) in doctor_stats[doctor]["intervals"]:  # go through each existing (start,end) for that doctor
+        if start < e and end > s:  # if times overlap, there is a conflict
+            conflict = True
+            break  # stop checking more intervals
+    if conflict:  # if there was an overlap
+        invalid_appointments.append((patient, doctor, "Time conflict"))
+        time_conflict_patients.add(patient)  # record patient in conflict list
+        continue  # skip to next appointment
+
+    doctor_stats[doctor]["intervals"].append((start, end))  # save new appointment time for doctor
+
+    fee = doctors[doctor]["fee"]  # base fee
+    if insured:  # if the patient has insurance
+        disc = doctors[doctor]["insured_disc"]
+        fee = fee * (1 - disc / 100)  # apply discount
+
+    doctor_stats[doctor]["count"] += 1  # add one valid appointment
+    doctor_stats[doctor]["revenue"] += fee  # add the fee
+    valid_appointments.append((patient, doctor, fee))  # store result
+
+for doc in sorted(doctor_stats):  # go through doctors in alphabetical order
+    c = doctor_stats[doc]["count"]
+    rev = doctor_stats[doc]["revenue"]
+    print(f"{doc}: {c} valid appointment(s), total revenue = {rev:.2f}")
+
+for pat, doc, reason in invalid_appointments:  # go through all invalid ones
+    print(f"{pat} ({doc}) → {reason}")
+
+print(sorted(time_conflict_patients))  # show all conflict patients alphabetically
+
 # ======================================================================
 # 2) SPORTS LEAGUE TABLE — points, tiebreakers, fair play
 # ======================================================================
@@ -60,6 +116,61 @@ matches = [
 table = {}  # team -> {"pts", "gf", "ga", "gd", "cards"}
 
 # Hint: update both teams per match; compute gd at the end; use sorted(..., key=..., reverse=...)
+
+for home, away, hg, ag, hc, ac in matches:  # go through each match in the list
+    # add both teams if not yet in table
+    if home not in table:  # check if home team is new
+        table[home] = {"pts": 0, "gf": 0, "ga": 0, "gd": 0, "cards": 0}
+    if away not in table:  # check if away team is new
+        table[away] = {"pts": 0, "gf": 0, "ga": 0, "gd": 0, "cards": 0}
+
+    table[home]["gf"] += hg  # add goals scored by home
+    table[home]["ga"] += ag  # add goals conceded by home
+    table[away]["gf"] += ag  # add goals scored by away
+    table[away]["ga"] += hg  # add goals conceded by away
+    table[home]["cards"] += hc  # add cards for home
+    table[away]["cards"] += ac  # add cards for away
+
+    if hg > ag:  # if home team scored more
+        table[home]["pts"] += 3
+    elif hg < ag:  # if away team scored more
+        table[away]["pts"] += 3
+    else:  # if same number of goals
+        table[home]["pts"] += 1
+        table[away]["pts"] += 1
+
+for team in table:  # go through every team in the table
+    table[team]["gd"] = table[team]["gf"] - table[team]["ga"]
+
+# sort teams according to rules
+sorted_teams = sorted(
+    table.items(),
+    key=lambda t: (t[1]["pts"], t[1]["gd"], t[1]["gf"], -t[1]["cards"]),
+    reverse=True,  
+)
+
+print("Team       Pts  GF  GA  GD  Cards") # print league table
+for team, stats in sorted_teams:  # print each team and their stats
+    print(f"{team:<10} {stats['pts']:>3}  {stats['gf']:>2}  {stats['ga']:>2}  {stats['gd']:>3}  {stats['cards']:>3}")
+
+# find top attack and best defense
+max_gf = -1
+best_attack = ""
+min_ga = 9999
+best_defense = ""
+
+for team, stats in table.items():  # go through all teams to find max GF and min GA
+    if stats["gf"] > max_gf:  # check if this team has more goals 
+        max_gf = stats["gf"]
+        best_attack = team
+    if stats["ga"] < min_ga:  # check if this team has fewer goals 
+        min_ga = stats["ga"]
+        best_defense = team
+
+print("Top attack:", best_attack, f"({max_gf} GF)")
+print("Best defense:", best_defense, f"({min_ga} GA)")
+
+
 
 # ======================================================================
 # 3) ROAD TRIP FUEL & TIME PLANNER
@@ -91,6 +202,41 @@ budget_fuel = 400.0
 
 # Hint: fuel_needed = total_distance * consumption / 100
 
+
+total_distance = 0 # compute total distance
+for name, dist in segments:  # go through each trip segment
+    total_distance += dist  # add the distance of the segment
+
+# compute total driving time 
+total_time = total_distance / car["avg_speed_kmh"]  # time = distance / speed
+
+# compute fuel needed 
+fuel_needed = total_distance * car["consumption_l_per_100km"] / 100  # liters needed
+
+# compute total fuel cost
+fuel_cost = fuel_needed * car["fuel_price_per_liter"]  # RON
+
+# compute number of refuels
+if fuel_needed <= car["tank_liters"]:  # if total fuel fits in one tank
+    refuels = 0  # no refuel needed
+else:  # otherwise need to refill
+    refuels = int(fuel_needed // car["tank_liters"])  # count full refuels
+    if fuel_needed % car["tank_liters"] > 0:  # if there's leftover distance needing partial refill
+        refuels += 1  # add one more refill
+
+# check if within fuel budget
+if fuel_cost <= budget_fuel:  # if cost is under or equal to budget
+    within_budget = True
+else:  # if cost exceeds budget
+    within_budget = False
+
+print(f"Total distance: {total_distance} km")
+print(f"Total driving time: {total_time:.2f} hours")
+print(f"Fuel needed: {fuel_needed:.2f} liters")
+print(f"Fuel cost: {fuel_cost:.2f} RON")
+print(f"Refuels required: {refuels}")
+print(f"Within budget: {within_budget}")
+
 # ======================================================================
 # 4) BACKUP & STORAGE PLANNER
 # ======================================================================
@@ -118,6 +264,44 @@ drives = {
 #    - per drive: capacity, fits_all, overflow(if any)
 
 # Hint: like email dedup but keyed by checksum; sum sizes of kept files; loop over drives to compare.
+
+
+unique_files = []  # will store only unique files
+seen_checksums = set()  # track which checksums already seen
+removed_duplicates = 0  # count duplicates
+
+for name, size, chk in files:  # loop through each file entry
+    if chk not in seen_checksums:  # if this checksum hasn't appeared yet
+        unique_files.append((name, size, chk))  # keep this file
+        seen_checksums.add(chk)  # mark checksum as seen
+    else:  # if checksum already seen
+        removed_duplicates += 1  # count this as a removed duplicate
+
+
+total_unique_size = 0 # compute total unique size
+for _, size, _ in unique_files:  # loop over unique files
+    total_unique_size += size  # sum their sizes
+
+for label, capacity in drives.items():  # go through each drive
+    if total_unique_size <= capacity:  # if total fits
+        fits_all = True  # mark it fits
+        overflow = 0  # no overflow
+    else:  # if exceeds capacity
+        fits_all = False  # does not fit
+        overflow = total_unique_size - capacity  # compute overflow amount
+
+
+    print(f"{label}: capacity={capacity} MB, fits_all={fits_all}", end="")
+    if not fits_all:  # if not fitting
+        print(f", overflow={overflow} MB")  # print overflow
+    else:  # if it fits
+        print()  # just move to next line
+
+
+print("Kept files:", [f[0] for f in unique_files])
+print("Removed duplicates:", removed_duplicates)
+print(f"Total unique size: {total_unique_size} MB")
+
 
 # ======================================================================
 # 5) AIRLINE BAGGAGE CHECK
