@@ -1,3 +1,5 @@
+from typing import Callable, TypeVar
+
 """
 Homework – Closures & Decorators (Real-World Problems, Level 2)
 
@@ -58,9 +60,34 @@ IMPORTANT:
 - The returned function must take exactly ONE argument.
 """
 
-def make_price_calculator(vat_percent, packaging_fee, discount_threshold, discount_percent):
+def make_price_calculator(
+        vat_percent: float,
+        packaging_fee: float, 
+        discount_threshold: float, 
+        discount_percent: float) -> Callable[[float], float]:
     # TODO: implement using a closure + nonlocal counter + discount logic
-    raise NotImplementedError("Problem 1 not implemented")
+    counter: int = 0
+    def calculate_price(base_price: float) -> float:
+        nonlocal counter   
+        counter += 1
+
+        if counter % 5 == 0:
+            print(f"INFO: bulk pricing check used {counter} times")
+
+        if base_price < 0:
+            raise ValueError("Base price cannot be negative")
+        
+        if base_price >= discount_threshold:
+             discounted = base_price * (1 - discount_percent / 100)
+        else:
+            discounted = base_price
+        price_with_vat: float = discounted * (1 + vat_percent / 100)
+        final_price: float = price_with_vat + packaging_fee
+        final_price = round(final_price, 2)
+        
+        return final_price
+    
+    return calculate_price
 
 
 # ============================================================
@@ -139,22 +166,31 @@ IMPORTANT:
 - Do NOT use *args or **kwargs.
 - Do NOT use global variables.
 """
+T = TypeVar("T")
+def audit_log(func: Callable[[], T]) -> Callable[[], T]:
+    call_count: int = 0 # TODO: implement decorator with closure, nonlocal, and wrapper.call_count
+    def wrapper() -> T:
+        nonlocal call_count
 
-def audit_log(func):
-    # TODO: implement decorator with closure, nonlocal, and wrapper.call_count
-    def wrapper():
-        # TODO
-        return func()
+        call_count += 1
+        wrapper.call_count = call_count # type: ignore[attr-defined]
+
+        print(f"[AUDIT] Starting {func.__name__}(call #{call_count})")
+        result: T = func()
+        print(f"[AUDIT] Finished {func.__name__}(call #{call_count})")
+        
+        return result
+    wrapper.call_count = 0 # type: ignore[attr-defined]
     return wrapper
 
 
 @audit_log
-def run_backup():
+def run_backup() -> None:
     print("Running backup...")
 
 
 @audit_log
-def cleanup_temp_files():
+def cleanup_temp_files() -> None:
     print("Cleaning up temporary files...")
 
 
@@ -296,4 +332,31 @@ def book_appointment():
 # ============================================================
 
 if __name__ == "__main__":
-    pass
+    print("test")
+    calc: Callable[[float], float] = make_price_calculator(10, 5, 200, 15)
+
+    print(calc(300))
+
+    print(calc(150))
+
+    try: 
+        print(calc(-50)) 
+    except ValueError as e: 
+        print(f"Negative price raised ValueError{str(e)}")
+
+    print(calc(199.5))
+
+    print(calc(0))
+
+    print(run_backup.call_count)
+    run_backup()
+
+    print(run_backup.call_count)
+    run_backup()
+
+    print(cleanup_temp_files.call_count)
+    cleanup_temp_files()
+
+    print(cleanup_temp_files.call_count)
+    cleanup_temp_files()
+
