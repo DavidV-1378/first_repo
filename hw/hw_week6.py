@@ -30,6 +30,34 @@ Requirements:
 
 # Your code here
 
+balance = 2000
+
+while True:
+    user_input = input("Enter amount to withdraw (or 'exit'): ").strip().lower()
+
+    if user_input == 'exit':
+        print("Session ended")
+        break
+
+    if not user_input.isdigit():
+        print("Invalid input, enter a positive number")
+        continue
+
+    amount = int(user_input)
+
+    if amount <= 0:
+        print("Invalid input, amount has to be positive")
+        continue
+    elif amount > balance:
+        print("Not enough funds")
+        continue
+    else:
+        balance -= amount
+        print(f"Withdrawal successful, remaining balance: {balance} RON")
+
+    if balance == 0:
+        print("ATM out of cash")
+        break
 
 # ======================================================================
 # 2) CLEANING UP USER INPUT (while + continue)
@@ -75,6 +103,16 @@ Requirements:
 
 # Your code here
 
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+steps = [5234, 12000, 7500, 8100, 4300, 11000, 9200]
+
+for i, day_name in enumerate(days, start=1):
+    print(f"Day {i} ({day_name}): {steps[i-1]} steps") # Print daily report
+
+
+over_8000 = [days[i] for i, s in enumerate(steps) if s > 8000]    # List comprehension find days with > 8000 steps
+                                                                  # Zip them together to associate names with values
+print(over_8000)
 
 # ======================================================================
 # 4) MERGING PRODUCT DATA (zip + list comprehensions)
@@ -98,6 +136,18 @@ Requirements:
 
 # Your code here
 
+product_names = ["Laptop", "Mouse", "Keyboard", "Monitor"]
+product_prices = [3500.0, 80.0, 150.0, 900.0]
+
+
+product_labels = [f"{name} - {price} RON" for name, price in zip(product_names, product_prices)] # Create string list using zip and list comprehension
+
+for label in product_labels: # Print each on its own line
+    print(label)
+
+expensive_products = [name for name, price in zip(product_names, product_prices) if price > 500] 
+
+print(expensive_products)
 
 # ======================================================================
 # 5) SIMPLE TODO MANAGER
@@ -132,3 +182,45 @@ Requirements:
 8. For invalid menu choices, print a message and continue.
 """
 # Your code here
+
+tasks = []
+
+while True:
+    print("\n--- TODO MANAGER ---")
+    print("1) Add task")
+    print("2) List tasks")
+    print("3) Mark task as done")
+    print("4) Show only pending tasks")
+    print("5) Exit")
+    
+    choice = input("Select an option: ")
+    
+    if choice == "1":
+        title = input("Enter task title: ")
+        tasks.append({"title": title, "done": False})
+        
+    elif choice == "2":
+        for i, task in enumerate(tasks):
+            status = "x" if task["done"] else " "
+            print(f"[{i}] [{status}] {task['title']}")
+            
+    elif choice == "3":
+        idx = int(input("Enter the task index to mark as done: "))
+        if 0 <= idx < len(tasks):
+            tasks[idx]["done"] = True
+        else:
+            print("Invalid index!")
+            
+    elif choice == "4":
+        pending = [t for t in tasks if not t["done"]]
+        print("\nPending Tasks:")
+        for i, task in enumerate(pending):
+            print(f"[-] {task['title']}")
+            
+    elif choice == "5":
+        print("Goodbye!")
+        break
+        
+    else:
+        print("Invalid choice, please try again.")
+        continue
