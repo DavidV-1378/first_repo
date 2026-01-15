@@ -38,8 +38,26 @@ IMPORTANT:
 
 # Your code here for Problem 1
 
+def parse_duration(raw: str) -> int | None:
+   try:
+      value = int(raw)
+      if not 15 <= value <= 120:
+         raise ValueError(f"value {value} is out of range.")
+      return value
+   except ValueError as e:
+      print(f"Converison failed {e}")
+      return None
+        
+# demo section
 
+appointment = input("Enter duration in minutes:")
 
+try:
+    duration = parse_duration(appointment)
+    print(f"Parsed successfully: {duration}")
+except ValueError as e:
+    print(f"Failed to prase duration: {e}")
+    duration = None
 
 # ======================================================================
 # 2) ITERATORS — LOG READER
@@ -77,8 +95,21 @@ Requirements:
 
 # Your code here for Problem 2
 
+logs = [
+    "INFO: System started",
+    "WARNING: High memory usage",
+    "ERROR: Disk almost full",
+    "INFO: Cleanup started",
+    "ERROR: Cleanup failed",
+]
 
+log_iter = iter(logs)
 
+print(next(log_iter))
+print(next(log_iter))
+
+for index, log in enumerate(log_iter, start=2):
+    print(f"[{index}] {log}")
 
 # ======================================================================
 # 3) GENERATORS — ALERT STREAM FOR SENSOR VALUES

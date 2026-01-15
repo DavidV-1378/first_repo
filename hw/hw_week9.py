@@ -130,7 +130,6 @@ def make_step_session(daily_goal):
     # TODO: implement using a closure, nonlocal, and progress calculation
     raise NotImplementedError("Problem 2 not implemented")
 
-
 # ============================================================
 # PROBLEM 3 – Decorator: Audit Logging with Call Count
 # ============================================================
