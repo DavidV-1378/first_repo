@@ -141,7 +141,29 @@ Requirements:
 
 # Your code here for Problem 3
 
+from typing import Generator, Tuple, Iterable
 
+temperatures = [-5, 0, 10, 31, 45]
+
+def classify_temperature(values: Iterable[float]) -> Generator[Tuple[str, float], None, None]:
+    for value in values:
+         if value < 0:
+            yield ("FREEZING", value)
+         elif value <= 30:
+            yield ("NORMAL", value)
+         else:
+            yield ("OVERHEAT", value)
+
+"""gen = classify_temperature(temperatures) 
+status, temp_value = next(gen)
+print(f"Reading {temp_value} -> {status}")
+status, temp_value = next(gen)
+print(f"Reading {temp_value} -> {status}")
+status, temp_value = next(gen)
+print(f"Reading {temp_value} -> {status}")"""
+
+for status, temp_value in classify_temperature(temperatures):
+   print(f"Reading {temp_value} -> {status}")
 
 
 # ======================================================================
@@ -215,3 +237,66 @@ d) Wrap the initial next(it) in try/except StopIteration to handle the
 """
 
 # Your code here for Problem 4
+
+raw_orders: list[dict[str, str]] = [
+    {"id": "A01", "quantity": "3", "price": "19.99"},
+    {"id": "A02", "quantity": "X", "price": "5.00"},   
+    {"id": "A03", "quantity": "2", "price": "abc"},
+    {"id": "A04", "quantity": "0", "price": "14.99"},
+    {"id": "A05", "quantity": "-1", "price": "24.99"}
+]
+
+def parse_order(order: dict[str, str]) -> dict[str, object]:
+    quantity_str = order["quantity"] 
+    price_str = order["price"]
+    try:
+        quantity: int = int(quantity_str)
+    except ValueError as e:
+        raise ValueError(f"Invalid Quantity {quantity_str} must be int") from e
+    try:
+        price: float = float(price_str)
+    except ValueError as e:
+        raise ValueError(f"Invalid price {price_str} must be a float") from e
+    if quantity <= 0:
+        raise ValueError(f"Invalid quantity {quantity}, quantity must be > 0")
+    
+    total = price * quantity
+    
+    return {
+        "id":order["id"],
+        "quantity": quantity,
+        "price": price,
+        "total": total
+    }
+
+def valid_orders(raw_orders: Iterable[dict[str, str]]) -> Generator[dict[str, object], None, None]:
+   for raw_order in raw_orders:
+      
+      id = raw_order.get("id", "missing")
+      
+      try:
+         cleaned_order = parse_order(raw_order)
+      except ValueError as e:
+          print(f"Skipping invalid order {id}: {e}")
+          continue
+      yield cleaned_order  
+
+count_valid_orders: int = 0
+
+total_revenue: float = 0.0
+
+it = valid_orders(raw_orders)
+
+try:
+   first = next(it)
+except StopIteration:
+    print("No valid orders found.")
+else:
+    count_valid_orders += 1
+    total_revenue += float(first["total"])
+
+for order in it:
+    total_revenue += float(order["total"])
+    count_valid_orders += 1
+
+print(f"Processed {count_valid_orders} valid orders, total revenue: {total_revenue:.2f} RON")
