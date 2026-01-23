@@ -83,6 +83,7 @@ checker = make_treshold_checker(low = 20.0, high = 23)
 
 for valid_line in valid_lines:
     temp = valid_line["temp"]
+    zone = str(valid_line["zone"])
     lable = checker(temp)
 
 #todo:
@@ -97,7 +98,7 @@ for valid_line in valid_lines:
 # def make_treshold_checker(*, low: float, high: float) -> function that returns "LOW", "OK" or "HIGH"
 # use it to label each valid reading and count how many low/high events happen per zone
 
-
+def summarize():
 
 
 
