@@ -134,10 +134,26 @@ def compute_total(cat: dict[str, float], order: dict[str, object]) -> float:
     
     return round(total, 2)
 
-for order in parsed_orders:
-    print(compute_total(catalogue, order))
+processed_orders = []
+rejected_orders = []
 
+for raw in raw_orders:
+    try:
+        clean = parse_order(raw)
+        total = compute_total(catalogue, clean)
+        clean["total"] = total
+        processed_orders.append(clean)
+    except OrderError as e:
+        rejected_orders.append({"raw": raw, "error": str(e)})
 
-   
-    
-    
+total_revenue = sum(o["total"] for o in processed_orders)
+revenue_per_product = {}
+for o in processed_orders:
+    pid = o["product_id"]
+    revenue_per_product[pid] = revenue_per_product.get(pid, 0) + o["total"]
+
+top_3 = sorted(processed_orders, key=lambda x: x["total"], reverse=True)[:3]
+coupons_used = [o["coupon"] for o in processed_orders if o["coupon"] not in (None, "NONE")]
+
+assert processed[0]["total"] == 24.95 
+assert processed[1]["total"] == 14.38
