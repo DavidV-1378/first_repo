@@ -86,29 +86,46 @@ for valid_line in valid_lines:
     zone = str(valid_line["zone"])
     lable = checker(temp)
 
-#todo:
-#count how many low/high events happen per zone
 
 # 2) Stats per zone.
 # def summarize(readings: list[dict[str,object]]) -> dict[str,dict[str,float]]
 # for each zone compute count, mintmep, maxtemp and avarage time
 # rerun nested dict like: {"living": {"count": 2, "mintmep": 22.0...}}
-# 3) Zone treshold checker (closure).
-# Write a function factory:
-# def make_treshold_checker(*, low: float, high: float) -> function that returns "LOW", "OK" or "HIGH"
-# use it to label each valid reading and count how many low/high events happen per zone
 
-def summarize():
+def summarize(readings: list[dict[str, object]]) -> dict[str, dict[str, float]]:
+    stats = {}
+    for reading in readings:
+        zone = str(reading["zone"])
+        temp = float(reading["temp"])
+        
+        if zone not in stats:
+            stats[zone] = {"count": 0, "min_temp": temp, "max_temp": temp, "total_temp": 0.0}
+        
+        s = stats[zone]
+        s["count"] += 1
+        s["min_temp"] = min(s["min_temp"], temp)
+        s["max_temp"] = max(s["max_temp"], temp)
+        s["total_temp"] += temp
 
+    for zone in stats:
+        stats[zone]["avg_temp"] = round(stats[zone].pop("total_temp") / stats[zone]["count"], 2)
+        
+    return stats
 
+#todo:
+#count how many low/high events happen per zone
 
+event_counts = {}
 
-# 4) Call logging and call count.
-# Create a decorator def audit_calls(func)
-# that works with any *args **kwargs
-# prints: before/after 
-# maintains a per_function "call_count"
-# Apply it to parse_line and summarize
-# 5) Parse all lines, keep invalid lines in a errors list with messages
-# print how many valid vs invalid, the per zone summary, top zone by avarege temp, decorator call counts
-# 6) Use a lambda funtion to rank zones by avarege temp
+for valid_line in valid_lines:
+    temp = float(valid_line["temp"])
+    zone = str(valid_line["zone"])
+    label = checker(temp)
+    
+    if zone not in event_counts:
+        event_counts[zone] = {"LOW": 0, "HIGH": 0}
+    
+    if label == "LOW":
+        event_counts[zone]["LOW"] += 1
+    elif label == "HIGH":
+        event_counts[zone]["HIGH"] += 1
