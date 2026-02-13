@@ -6,8 +6,5 @@ print("Hello form Module!")
 
 print(__name__)
 
-def main() -> None:
-    print("Program Entry")
 
-if __name__ == "__main__":
-    main()
+
