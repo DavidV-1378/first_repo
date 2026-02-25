@@ -30,3 +30,4 @@ a = SafeCounter()
 a.__value = -3
 # a.set(3)
 print(a.get())
+
