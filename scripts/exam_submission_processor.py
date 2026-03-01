@@ -35,7 +35,7 @@ The list MUST contain:
 """
 
 raw_submissions: list[str] = [
-   e
+   
 ]
 
 # ------------------------------------------------------------
@@ -220,3 +220,173 @@ In the __main__ section:
 if __name__ == "__main__":
     # TODO: run processing and print results
     pass
+
+from __future__ import annotations
+from typing import Callable
+
+from __future__ import annotations
+from typing import Callable
+
+# ============================================================
+# Exam Submission Processor — CORRECTED REFERENCE SOLUTION
+# ============================================================
+
+
+# ------------------------------------------------------------
+# Data setup
+# ------------------------------------------------------------
+
+raw_submissions: list[str] = [
+    "student_id=ST001;score=80;status=submitted",
+    "student_id=ST002;score=90;status=submitted",
+    "student_id=ST001;score=70;status=submitted",
+    "student_id=ST003;score=85;status=late",          # late
+    "student_id=ST004;score=abc;status=submitted",    # invalid score
+    "student_id=ST005;status=submitted",               # missing score
+    "student_id=ST006;score=95;status=unknown",        # invalid status
+]
+
+
+# ------------------------------------------------------------
+# 1) Parsing and validation
+# ------------------------------------------------------------
+
+def parse_submission(line: str) -> dict[str, object]:
+    """
+    Parse and validate ONE submission line.
+    """
+    try:
+        parts = line.split(";")
+        data: dict[str, str] = {}
+
+        for part in parts:
+            key, value = part.split("=")
+            data[key] = value
+
+        student_id = data["student_id"].strip()
+        if not student_id:
+            raise ValueError("Empty student_id")
+
+        score = int(data["score"])
+        if not (0 <= score <= 100):
+            raise ValueError("Score out of range")
+
+        status = data["status"]
+        if status not in ("submitted", "late"):
+            raise ValueError("Invalid status")
+
+        return {
+            "student_id": student_id,
+            "score": score,
+            "status": status,
+        }
+
+    except Exception as e:
+        raise ValueError(f"Invalid submission line: {line}") from e
+
+
+# ------------------------------------------------------------
+# 2) Safe parsing wrapper
+# ------------------------------------------------------------
+
+def safe_parse_submission(line: str) -> dict[str, object] | None:
+    """
+    Safely parse a submission line.
+    """
+    try:
+        return parse_submission(line)
+    except ValueError as e:
+        print("Skipping invalid submission:", e)
+        return None
+
+
+# ------------------------------------------------------------
+# 3) Closure: Per-student average calculator (FIXED)
+# ------------------------------------------------------------
+
+def make_student_averager() -> Callable[[int], float]:
+    """
+    Returns a function that accumulates scores
+    and returns the running average.
+    """
+    total = 0
+    count = 0
+
+    def add_score(score: int) -> float:
+        nonlocal total, count
+        total += score
+        count += 1
+        return total / count
+
+    return add_score
+
+
+# ------------------------------------------------------------
+# 4) Decorator: Reject late submissions
+# ------------------------------------------------------------
+
+def reject_late(func: Callable[[dict[str, object]], None]) -> Callable[[dict[str, object]], None]:
+    def wrapper(submission: dict[str, object]) -> None:
+        if submission["status"] == "late":
+            print("Submission rejected (late)")
+            return None
+        return func(submission)
+
+    return wrapper
+
+
+# ------------------------------------------------------------
+# 5) Decorator FACTORY: Permission control
+# ------------------------------------------------------------
+
+def require_min_permission(level: int):
+    def decorator(func: Callable[[dict[str, object]], None]):
+        def wrapper(submission: dict[str, object]) -> None:
+            permission_level = submission.get("permission_level", 0)
+            if permission_level < level:
+                raise PermissionError("Insufficient permission")
+            return func(submission)
+
+        return wrapper
+    return decorator
+
+
+# ------------------------------------------------------------
+# 6) Processing pipeline (FIXED, NO HACKS)
+# ------------------------------------------------------------
+
+def process_submissions(lines: list[str]) -> dict[str, float]:
+    """
+    Process submissions and compute final average per student.
+    """
+    averagers: dict[str, Callable[[int], float]] = {}
+    results: dict[str, float] = {}
+
+    for line in lines:
+        parsed = safe_parse_submission(line)
+        if parsed is None:
+            continue
+
+        if parsed["status"] == "late":
+            continue
+
+        student_id = parsed["student_id"]
+        score = parsed["score"]
+
+        if student_id not in averagers:
+            averagers[student_id] = make_student_averager()
+
+        # Store the latest average returned by the closure
+        results[student_id] = averagers[student_id](score)
+
+    return results
+
+
+# ------------------------------------------------------------
+# 7) Demo section
+# ------------------------------------------------------------
+
+if __name__ == "__main__":
+    results = process_submissions(raw_submissions)
+    for student, avg in results.items():
+        print(f"Student {student}: average score = {avg:.2f}")
