@@ -24,16 +24,30 @@ class Expense:
 class Ledger:
     def __init__(self) -> None:
         self._items: list[Expense] = []
+        self._totals_by_catgeory = {}
+        self._by_category: dict[str, list[Expense]] = {}
     
     def add(self, e: Expense) -> None:
         self._items.append(e)
+        self._totals_by_category[e.category] = (
+            self._totals_by_catgeory.get(e.category, 0.0) + e.amount
+        )
+        if e.category not in self._by_category:
+            self._by_category[e.category] = []
+        self._by_category[e.category].append(e)
 
+    def expenses_in_category(self, catgeory: str) -> list[Expense]:
+        return list(self._by_category.get(catgeory, []))
+    
     def total(self) -> float:
         return sum(e.amount for e in self._items)
     
+    def total_by_catgeory(self, catgeory: str) -> float:
+        return self._totals_by_category.get(catgeory, 0.0)
+    
 
 
-def main() -> None:
+def example() -> None:
     a = Expense("12:04:2008", "cat1", 50.0, "note")
     print(a)
     b = Expense("12:04:2010", "cat1", 100.0, "note")
@@ -43,6 +57,34 @@ def main() -> None:
     c.add(a)
     c.add(b)
     print(c.total())
+
+def main() -> None:
+
+# internal index dictionary
+# category -> total amount
+# category -> list of expenses
+
+# simplicity vs speed -> single source of truth vs cached state
+
+# design rules:
+# 1. full item list is still base record
+# 2. index is derived from items
+# 3. maintaining the index incrementally, every mutation method must update both structures
+# 4. chose indexing when the query is common, update rules are manageble and performance benefit is worth it
+# example:
+
+def by_category(self) -> dict[str,float]:
+    totals: {}
+    for e in self._items:
+        totals[e.category] = totals.get(e.category, 0.0) + e.amount
+    
+    return totals
+
+    #indexed design:
+
+self._totals_by_category[e.category] = (
+    self._totals_by_catgeory.get(e.category, 0.0) + e.amount
+)
 
 if __name__ == "__main__":
     main()

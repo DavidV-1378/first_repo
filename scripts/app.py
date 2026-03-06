@@ -1,4 +1,4 @@
-from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc
+from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker
 
 def BA() -> None:
     account = BankAccount(100.0, "David")
@@ -47,7 +47,7 @@ def exempleA() -> None:
 # Keys are the first letter of each title, upper cased.
 # Values are the number of books that start with that letter.
 
-def main() -> None:
+def example_library() -> None:
     maths_book = Book("Maths 101", 300)
     cs_book = Book("CS 101", 100)
     m_book = Book("Maths 102", 400)
@@ -65,6 +65,26 @@ def main() -> None:
     print(items)
 
 # 3. Add a method to the library that returns all stored books. but witout allowing the caller to mutate the list
+
+
+# Create a small tag tracker system:
+# A tag entry stores a tag name
+# The tracker stores many entires
+# The tracker mantains a internal dictionary tag -> count
+# Must support adding a entry and returning the count for a given tag
+
+def main() -> None:
+    tracker = TagTracker()
+    entry_1 = TagEntry("SQL")
+
+    tracker.add(entry_1)
+
+    tracker.add(TagEntry("Python"))
+
+    tracker.add(TagEntry("Python"))
+
+    print(tracker.count_entry("Python"))
+
 
 if __name__ == "__main__":   
     main()
