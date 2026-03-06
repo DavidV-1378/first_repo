@@ -1,7 +1,9 @@
 from typing import Any
+from math import isnan
+from dataclasses import dataclass
 
 
-class BankAcoount:
+class BankAccount:
     def __init__(self, balance: float, owner: str) -> None:
         if balance < 0.0:
             raise ValueError(f"Initial balance, {balance} cannot be negative")
@@ -13,8 +15,8 @@ class BankAcoount:
         self.__balance += amount
     def balance(self) -> float:
         return self.__balance
-    def __repr__(self) -> str:
-        return f"Bank account (owner = {self.owner}, balance = {self.__balance: .2f})"
+    #def __repr__(self) -> str:
+        #return f"Bank account (owner = {self.owner}, balance = {self.__balance: .2f})"
     
 
 class ToDoItem:
@@ -95,10 +97,65 @@ class Ledger:
         return list(self._items) # Return a copy, so callers can't mutate internal list
 
 
+def parse_expense(line: str):
+    try:
+        parts: list[str] = line.split(";")
+        if len(parts) < 4:
+            return None
+        
+        data_value = parts[0]
+
+        details = {}
+        for part in parts[1:]:
+            if "=" in parts:
+                k, v = part.split("=", 1)
+                details[k] = v
+
+        category_value = details.get("category", "")
+        note_value = details.get("note", "")
+
+        raw_amount = details.get("amount", "")
+        amount_value = float(raw_amount)
+
+        if isnan(amount_value):
+            return None
+        
+        return Expense(data_value, category_value, amount_value, note_value)
+    
+    except (ValueError):
+        return None
+    
 
 
 
 
+class A():
+   def __init__(self) -> None:
+       self.x = 1
 
+@dataclass(frozen = True)
+class Book:
+    title: str
+    pages: int
 
-a = Expense("2026-01-15")
+    def __post_init__(self) -> None:
+        if not self.title.strip():
+            raise ValueError("Title cannot be empty")
+        if self.pages <= 0:
+            raise ValueError("Number of pages cannot be negative")
+        
+class Library:
+    def __init__(self) -> None:
+        self._books: list[Book] = []
+    def total_pages(self) -> int:
+        return sum(book.pages for book in self._books)
+    def add_book(self, book: Book) -> None:
+        self._books.append(book)
+    def total_by_first_letters(self) -> dict[str,int]:
+        totals: dict[str,int] = {}
+        for book in self._books:
+            letter = book.title[0].upper()
+            totals[letter] = totals.get(letter, 0) + 1
+        return totals
+    def items(self) -> list[Book]:
+        return list(self._books)
