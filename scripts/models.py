@@ -159,3 +159,24 @@ class Library:
         return totals
     def items(self) -> list[Book]:
         return list(self._books)
+    
+@dataclass(frozen = True)
+class TagEntry:
+    name:str 
+
+    def __post_init__(self) -> None:
+        if not self.name.strip():
+            raise ValueError("Name must not be empty")
+        
+
+class TagTracker:
+    def __init__(self) -> None:
+        self._entries: list[TagEntry] = []
+        self._count: dict[str, int] = {}
+
+    def add(self, entry: TagEntry) -> None:
+        self._entries.append(entry)
+        self._count[entry.name] = self._count.get(entry.name, 0) + 1
+
+    def count_entry(self, tag: str) -> int:
+        return self._count.get(tag.strip(), 0)
