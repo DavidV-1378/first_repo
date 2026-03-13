@@ -1,4 +1,4 @@
-from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker
+from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker, Order, OrderItem
 
 def BA() -> None:
     account = BankAccount(100.0, "David")
@@ -73,7 +73,7 @@ def example_library() -> None:
 # The tracker mantains a internal dictionary tag -> count
 # Must support adding a entry and returning the count for a given tag
 
-def main() -> None:
+def tracker_entry() -> None:
     tracker = TagTracker()
     entry_1 = TagEntry("SQL")
 
@@ -84,6 +84,28 @@ def main() -> None:
     tracker.add(TagEntry("Python"))
 
     print(tracker.count_entry("Python"))
+
+
+# Build an order system. 
+# An order item has: name, price, qty
+# Validate all fields
+# An order stores many items
+# Expose item_count, customer_id and total_cost as properties
+
+def main():
+    item_1 = OrderItem("Laptop", 499.9, 1)
+    item_2 = OrderItem("Headphones", 49.9, 2)
+    item_3 = OrderItem("Mouse", 19.9, 3)
+    
+    final_order = Order("CI3748")
+
+    final_order.add_item(item_1)
+    final_order.add_item(item_2)
+    final_order.add_item(item_3)
+
+    print(final_order.item_count)
+    print(final_order.total_cost)
+
 
 
 if __name__ == "__main__":   

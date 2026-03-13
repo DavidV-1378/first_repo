@@ -180,3 +180,44 @@ class TagTracker:
 
     def count_entry(self, tag: str) -> int:
         return self._count.get(tag.strip(), 0)
+    
+
+
+@dataclass(frozen = True)
+class OrderItem:
+    name: str
+    price: float
+    qty: int
+
+    def __post_init__(self):
+        if not self.name:
+            raise ValueError("A name must be inputed")
+        if self.price < 0.0:
+            raise ValueError("Price must be above zero")
+        if self.qty < 0: 
+            raise ValueError("Quantity must be above zero")
+        
+    def cost(self) -> float:
+        return self.price * self.qty
+
+class Order:
+    def __init__(self, customer_id: str) -> None:
+        self._customer_id = customer_id
+        self._order_items: list[OrderItem] = []
+
+    @property
+    def customer_id(self) -> str:
+        return self._customer_id
+    
+    def add_item(self, item: OrderItem):
+        self._order_items.append(item)
+    
+    @property
+    def item_count(self) -> int:
+        return len(self._order_items)
+    
+    @property
+    def total_cost(self) -> float:
+        return sum(item.cost() for item in self._order_items)
+    
+
