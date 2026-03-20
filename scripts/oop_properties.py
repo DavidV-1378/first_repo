@@ -74,3 +74,17 @@ class Student:
 student_1 = Student([7, 9, 6, 10, 8])
 
 print(f"David is passing? {student_1.is_passing}")
+
+
+class Product:
+    def __init__(self, price: float) -> None:
+        self._price = price
+
+    @property
+    def price(self) -> float:
+        return self._price
+    
+product_1 = Product(10.0)
+
+product_1._price = -5.0
+print(product_1.price)
