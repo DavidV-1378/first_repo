@@ -1,6 +1,6 @@
 # How:
 # Internal mutable state ussualy lives in "private by convention" attributes such as: _items, _balance
-# A property exposes waht outisde code should be allowed to see.
+# A property exposes what outisde code should be allowed to see.
 # If outisde code should not assign freely, do not expose raw, writable public attributes.
 # Use properties when the information is conceptually part of the object public interface.
 # We use @property to define a method as an attribute.
@@ -17,7 +17,7 @@ class BankAccount:
 bank_account_1 = BankAccount()
 
 print(bank_account_1.balance)
-
+ 
 class Library:
     def __init__(self) -> None:
         self._titles: list[str] = []

@@ -220,4 +220,36 @@ class Order:
     def total_cost(self) -> float:
         return sum(item.cost() for item in self._order_items)
     
+@dataclass(frozen = True)
+class Expense_2:
+    date: str
+    category: str
+    amount: float
+    note: str
 
+    def __post_init__(self) -> None:
+        if not self.date.strip():
+            raise ValueError("Date must not be empty.")
+        if not self.category.strip():
+            raise ValueError("Catgeory must not be empty.")
+        if self.amount <= 0:
+            raise ValueError("amount must be grater than zero.")
+    
+    @classmethod
+    def from_csv_line(cls, line: str, delimitator: str) -> Expense_2|None:
+        try:
+        
+            parts = [part.strip() for part in line.split(delimitator)]
+            if len(parts) != 4:
+                return None
+        
+            return cls(date = parts[0], category = parts[1], amount = float(parts[2]), note = parts[3])
+        
+        except ValueError:
+            return None
+        
+    @classmethod
+    def build_from_dictionary(cls, dictionary: dict) -> Expense_2:
+        return cls(date = dictionary["date"], category = dictionary["category"], 
+                   amount = float(dictionary["amount"]), note = dictionary.get("note", " ")) 
+    

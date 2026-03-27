@@ -1,4 +1,4 @@
-from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker, Order, OrderItem
+from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker, Order, OrderItem, Expense_2
 
 def BA() -> None:
     account = BankAccount(100.0, "David")
@@ -92,7 +92,7 @@ def tracker_entry() -> None:
 # An order stores many items
 # Expose item_count, customer_id and total_cost as properties
 
-def main():
+def order_system():
     item_1 = OrderItem("Laptop", 499.9, 1)
     item_2 = OrderItem("Headphones", 49.9, 2)
     item_3 = OrderItem("Mouse", 19.9, 3)
@@ -106,6 +106,26 @@ def main():
     print(final_order.item_count)
     print(final_order.total_cost)
 
+# Build an expense class that stores: date, category, amount, note.
+# Validate date not empty, category not empty and amount > 0.
+# Permit: parsing from a csv line, building from a dictionary.
+# Implement repr and str.
+
+
+
+
+
+def main():
+    
+    dictionary_expense: dict[str, str|float] = {
+        "date": "12:08:2026",
+        "category": "food",
+        "amount": "50.0",
+        "note": "groceries"
+    }
+    expense_1 = Expense_2.build_from_dictionary(dictionary_expense)
+
+    expense_from_line = Expense_2.from_csv_line("18:06:2025;food;100.0;groc", ";")
 
 
 if __name__ == "__main__":   
