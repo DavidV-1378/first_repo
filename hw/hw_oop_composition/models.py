@@ -1,5 +1,31 @@
 from dataclasses import dataclass
 
+### HW 1.1: ---------------------------------------------------------
+
+class Book:
+    def __init__(self, title, pages):
+        self.title = title
+        self.pages = pages
+
+class Library:
+    def __init__(self):
+        self.books = []
+
+    def add_book(self, book):
+        self.books.append(book)
+
+    def get_max_pages(self):
+        if not self.books:
+            return None
+        return max(book.pages for book in self.books)
+
+    def get_sorted_titles(self):
+        return sorted(book.title for book in self.books)
+
+### -----------------------------------------------------------------
+
+### -----------------------------------------------------------------
+
 @dataclass(frozen=True)
 class Expense: 
     date: str 

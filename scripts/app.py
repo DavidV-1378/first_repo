@@ -1,4 +1,5 @@
 from models import A, Book, Library, BankAccount, ToDoItem, SafeCounter as sc, TagEntry, TagTracker, Order, OrderItem, Expense_2
+from models_2 import Category, Expense as exp, Ledger as led, Difficulty, Question, QuestionBank
 
 def BA() -> None:
     account = BankAccount(100.0, "David")
@@ -106,16 +107,14 @@ def order_system():
     print(final_order.item_count)
     print(final_order.total_cost)
 
+# TODO:
 # Build an expense class that stores: date, category, amount, note.
 # Validate date not empty, category not empty and amount > 0.
 # Permit: parsing from a csv line, building from a dictionary.
 # Implement repr and str.
 
 
-
-
-
-def main():
+def dictionary_expense():
     
     dictionary_expense: dict[str, str|float] = {
         "date": "12:08:2026",
@@ -126,6 +125,49 @@ def main():
     expense_1 = Expense_2.build_from_dictionary(dictionary_expense)
 
     expense_from_line = Expense_2.from_csv_line("18:06:2025;food;100.0;groc", ";")
+
+
+# Build an expense system, where categories are a Enum(food, transport, books, fun, other)
+# Expense stores date, category, amount and note.
+# Ledger stores many Expenses and supports len, Expense in ledger and if Ledger, method by_category that retuns dict[category, float]
+
+def expense_system():
+    expense_1 = exp("12:09:2026", Category.FOOD, 25.0, "grocerise")
+    expense_2 = exp("27:06:2026", Category.TRANSPORT, 10.0, "taxi")
+    expense_3 = exp("15:04:2026", Category.FOOD, 35.0, "grocerise")
+    expense_4 = exp("15:04:2026", Category.FOOD, 6.0, "grocerise")
+
+    ledger_1 = led()
+    ledger_1.add(expense_1)
+    ledger_1.add(expense_2)
+    ledger_1.add(expense_3)
+    ledger_1.add(expense_4)
+
+    print(len(ledger_1))
+    print(f"e1 in ledger: {expense_1 in ledger_1}")
+    print(f"Not empty: {bool(ledger_1)}")
+    
+    for cat, total in ledger_1.by_category().items():
+        print(f"{cat.value}: {total}")
+
+# Build a quizz system with a difficulty Enum(easy = 1, medium  = 2, hard = 3)
+# Question class stores prompt, answer and difficulty properties and implements custom equlity, comparing by prompt text
+# QuestionBank class stores many questions and supports len, question in bank, bank empty, filter by a difficulty -> list[Question]
+
+def main():
+    question_1 = Question("1 + 1", "2", Difficulty.EASY)
+    question_2 = Question("2 + 2", "4", Difficulty.EASY)
+    question_3 = Question("2^2", "4", Difficulty.MEDIUM)
+
+    qb = QuestionBank()
+
+    qb.add(question_1)
+    qb.add(question_2)
+    qb.add(question_3)
+
+    print(question_1 == question_2)
+    print(question_1)
+    print(qb.fliter_by_difficulty(Difficulty.EASY))
 
 
 if __name__ == "__main__":   
