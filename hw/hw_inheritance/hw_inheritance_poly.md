@@ -8,7 +8,7 @@ Build a reporting layer for a ledger. The ledger should not know whether a repor
 - `WANT`
 - `SAVING`
 
-1. Create a frozen dataclass `Expense` with:
+2. Create a frozen dataclass `Expense` with:
 
 - `date`
 - `category`
@@ -30,12 +30,12 @@ Raw format:
 
 date;category;amount;type;note
 
-1. Create frozen dataclasses:
+3. Create frozen dataclasses:
 
 - `CategorySummary` with `category`, `count`, `total`
 - `LedgerReport` with `count`, `total`, `summaries`
 
-1. Create a normal class `Ledger` that:
+4. Create a normal class `Ledger` that:
 
 - stores expenses
 - maintains an internal category index
@@ -49,7 +49,7 @@ Report summaries should be sorted by:
 a. total descending
 b. category ascending
 
-1. Create base class `ReportFormatter` with format method
+5. Create base class `ReportFormatter` with format method
 
 Subclasses:
 
@@ -57,7 +57,7 @@ Subclasses:
 - `CsvReportFormatter`
 - `MarkdownReportFormatter`
 
-1. Write tests for:
+6. Write tests for:
 
 - parsing
 - ledger totals and category index
@@ -74,7 +74,7 @@ Build a study tracker where the same log can be evaluated by different progress 
 - `DISTRACTED`
 - `INCOMPLETE`
 
-1. Create a frozen dataclass `StudySession` with:
+2. Create a frozen dataclass `StudySession` with:
 
 - `topic`
 - `minutes`
@@ -96,7 +96,7 @@ Raw format:
 
 topic|minutes|tasks_done|status
 
-1. Create a normal class `StudyLog` that:
+3. Create a normal class `StudyLog` that:
 
 - stores sessions
 - maintains internal indexes:
@@ -108,7 +108,7 @@ topic|minutes|tasks_done|status
 - exposes properties `total_minutes`, `total_tasks`, `topic_count`
 - exposes methods `minutes_for(topic: str)` and `tasks_for(topic: str)`
 
-1. Create a base class `ProgressPolicy` with:
+4. Create a base class `ProgressPolicy` with:
 
 - `score(log: StudyLog) -> float`
 
@@ -124,7 +124,7 @@ Rules:
 - task policy: 3 points per task
 - balanced policy: duration points + task points, but distracted sessions count only half their minutes
 
-1. Write tests for:
+5. Write tests for:
 
 - parsing
 - bool/len/iteration behavior
@@ -147,7 +147,7 @@ Add:
 
 - classmethod `from_text(text: str) -> ProductCode` that normalizes to uppercase
 
-1. Create a frozen dataclass `Product` with:
+2. Create a frozen dataclass `Product` with:
 
 - `code`
 - `name`
@@ -162,13 +162,13 @@ Validate:
 - price > 0
 - weight_kg > 0
 
-1. Create a normal class `StockRecord` with:
+3. Create a normal class `StockRecord` with:
 
 - `product`
 - validated property `quantity`
 - property `inventory_value`
 
-1. Create a normal class `Inventory` that:
+4. Create a normal class `Inventory` that:
 
 - stores stock records by `ProductCode`
 - maintains an internal category index
@@ -179,18 +179,18 @@ Validate:
 - has `receive(product: Product, quantity: int) -> None`
 - has `fulfill(order: Order) -> None`, reducing stock or raising `ValueError`
 
-1. Create frozen dataclass `OrderItem` with:
+5. Create frozen dataclass `OrderItem` with:
 
 - `product`
 - `quantity`
 
-1. Create class `Order` that:
+6. Create class `Order` that:
 
 - stores order items
 - is iterable
 - exposes properties `subtotal`, `total_weight`, and `count`
 
-1. Create base class `ShippingPolicy` with:
+7. Create base class `ShippingPolicy` with:
 
 - `shipping_cost(order: Order) -> float`
 
@@ -201,7 +201,7 @@ Subclasses:
 - `WeightBasedShipping`
 - `FreeOverThresholdShipping`
 
-1. Write tests for:
+8. Write tests for:
 
 - stock receiving and indexes
 - fulfillment reducing stock
@@ -232,13 +232,13 @@ Add property:
 
 - `line_total`
 
-1. Create a frozen dataclass `ParseIssue` with:
+2. Create a frozen dataclass `ParseIssue` with:
 
 - `line_number`
 - `raw_line`
 - `reason`
 
-1. Create a normal class `OrderBatch` that:
+3. Create a normal class `OrderBatch` that:
 
 - stores valid order lines
 - maintains internal indexes:
@@ -248,7 +248,7 @@ Add property:
 - exposes properties `count`, `total_quantity`, and `total_revenue`
 - exposes methods `quantity_for(sku: str)` and `revenue_for(sku: str)`
 
-1. Create an `OrderParser` base class with:
+4. Create an `OrderParser` base class with:
 
 - `parse_line(line: str) -> OrderLine`
 
@@ -262,7 +262,7 @@ Parser contract:
 - return `OrderLine` for valid lines
 - raise `ValueError` for invalid lines
 
-1. Create an `InvalidLinePolicy` base class with:
+5. Create an `InvalidLinePolicy` base class with:
 
 - `handle(issue: ParseIssue, result: ImportResult) -> None`
 
@@ -272,12 +272,12 @@ Subclasses:
 - `CollectInvalidLines`
 - `StopOnInvalidLine`
 
-1. Create:
+6. Create:
 
 - `ImportResult`, which owns one `OrderBatch` and a list of issues
 - function `import_orders -> ImportResult`
 
-1. Write tests for:
+7. Write tests for:
 
 - both parser subclasses
 - collecting invalid lines
@@ -294,7 +294,7 @@ Build a gradebook system where different grading rules can be swapped without ch
 - `QUIZ`
 - `EXAM`
 
-1. Create a frozen dataclass `Assessment` with:
+2. Create a frozen dataclass `Assessment` with:
 
 - `student_id`
 - `category`
@@ -322,7 +322,7 @@ student_id;category;name;score;max_score
 Example:
 S1;quiz;Quiz 1;8;10
 
-1. Create a normal class `StudentRecord` that:
+3. Create a normal class `StudentRecord` that:
 
 - stores many assessments
 - rejects assessments for a different student
@@ -333,11 +333,11 @@ S1;quiz;Quiz 1;8;10
 - exposes read-only properties `student_id`, `count`, and `overall_percent`
 - exposes method `category_percent(category: Category) -> float`
 
-1. Create a base class `GradingPolicy` with:
+4. Create a base class `GradingPolicy` with:
 
 - `final_percent(record: StudentRecord) -> float`
 
-1. Create subclasses:
+5. Create subclasses:
 
 - `OverallPercentPolicy`
 - `DropLowestQuizPolicy`
@@ -349,7 +349,7 @@ Rules:
 - drop-lowest quiz removes the lowest quiz only if there are at least two quizzes
 - weighted category policy accepts category weights in the constructor
 
-1. Write tests for:
+6. Write tests for:
 
 - parsing raw lines
 - the internal category index
