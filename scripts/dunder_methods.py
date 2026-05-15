@@ -172,3 +172,6 @@ print(level.value)
 print(level == Diff.MEDIUM)
 
 
+# Build an expense system, where categories are a Enum(food, transport, books, fun, other)
+# Expense stores date, category, amount and note.
+# Ledger stores many Expenses and supports len, Expense in ledger and if Ledger, method by_category that retuns dict[category, float]h
