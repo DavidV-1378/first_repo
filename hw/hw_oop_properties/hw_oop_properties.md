@@ -1,4 +1,4 @@
-### HW1 (easy) — Rectangle with validated setters
+### 1. Rectangle with validated setters
 
 **Requirements (text):**
 Create a `Rectangle` class:
@@ -10,46 +10,7 @@ Create a `Rectangle` class:
   - `area`
   - `perimeter`
 
-#### Solution
-
-```python
-class Rectangle:
-    def __init__(self, width: float, height: float) -> None:
-        self.width = width
-        self.height = height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @width.setter
-    def width(self, value: float) -> None:
-        if value <= 0:
-            raise ValueError("width must be > 0")
-        self._width = value
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @height.setter
-    def height(self, value: float) -> None:
-        if value <= 0:
-            raise ValueError("height must be > 0")
-        self._height = value
-
-    @property
-    def area(self) -> float:
-        return self.width * self.height
-
-    @property
-    def perimeter(self) -> float:
-        return 2 * (self.width + self.height)
-```
-
----
-
-### HW2 (medium) — Employee with validated salary and computed tax
+### 2. Employee with validated salary and computed tax
 
 **Requirements (text):**
 Create an `Employee` class:
@@ -65,47 +26,7 @@ Create an `Employee` class:
   - `annual_salary`
   - `estimated_tax` equal to 10% of annual salary
 
-#### Solution
-
-```python
-class Employee:
-    def __init__(self, name: str, monthly_salary: float) -> None:
-        self.name = name
-        self.monthly_salary = monthly_salary
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value: str) -> None:
-        cleaned = value.strip()
-        if not cleaned:
-            raise ValueError("name must be non-empty")
-        self._name = cleaned
-
-    @property
-    def monthly_salary(self) -> float:
-        return self._monthly_salary
-
-    @monthly_salary.setter
-    def monthly_salary(self, value: float) -> None:
-        if value <= 0:
-            raise ValueError("monthly_salary must be > 0")
-        self._monthly_salary = value
-
-    @property
-    def annual_salary(self) -> float:
-        return self.monthly_salary * 12
-
-    @property
-    def estimated_tax(self) -> float:
-        return self.annual_salary * 0.10
-```
-
----
-
-### HW3 (hard) — Inventory item: decide setter vs method
+### 3  — Inventory item
 
 **Requirements (text):**
 Create an `InventoryItem` class:
@@ -127,68 +48,7 @@ Create an `InventoryItem` class:
   - `stock`
   - `inventory_value`
 
-#### Solution
-
-```python
-class InventoryItem:
-    def __init__(self, name: str, unit_price: float, stock: int) -> None:
-        self.name = name
-        self.unit_price = unit_price
-        if stock < 0:
-            raise ValueError("stock must be >= 0")
-        self._stock = stock
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value: str) -> None:
-        cleaned = value.strip()
-        if not cleaned:
-            raise ValueError("name must be non-empty")
-        self._name = cleaned
-
-    @property
-    def unit_price(self) -> float:
-        return self._unit_price
-
-    @unit_price.setter
-    def unit_price(self, value: float) -> None:
-        if value <= 0:
-            raise ValueError("unit_price must be > 0")
-        self._unit_price = value
-
-    @property
-    def stock(self) -> int:
-        return self._stock
-
-    def restock(self, amount: int) -> None:
-        if amount <= 0:
-            raise ValueError("restock amount must be > 0")
-        self._stock += amount
-
-    def sell(self, amount: int) -> None:
-        if amount <= 0:
-            raise ValueError("sell amount must be > 0")
-        if amount > self._stock:
-            raise ValueError("not enough stock")
-        self._stock -= amount
-
-    @property
-    def inventory_value(self) -> float:
-        return self.unit_price * self.stock
-```
-
-**Discussion point:**  
-This is the most important design example of the lesson:
-
-- price replacement is a setter
-- stock changes are domain actions, so methods are better
-
----
-
-### HW4 (hard) — Shopping Cart (Composition + Setters Integration)
+### 4  — Shopping Cart 
 
 **Requirements (text):**
 Create a `CartItem` class:
@@ -213,80 +73,7 @@ Create a `ShoppingCart` class (integrates Week A1/A2 Composition):
   - otherwise, add it to the dictionary.
 - expose a read-only computed property `total_price` which sums the subtotals of all items.
 
-#### Solution
-
-```python
-class CartItem:
-    def __init__(self, name: str, price: float, quantity: int) -> None:
-        cleaned_name = name.strip()
-        if not cleaned_name:
-            raise ValueError("name must be non-empty")
-        self._name = cleaned_name
-        self.price = price
-        self.quantity = quantity
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def price(self) -> float:
-        return self._price
-
-    @price.setter
-    def price(self, value: float) -> None:
-        if value <= 0:
-            raise ValueError("price must be > 0")
-        self._price = value
-
-    @property
-    def quantity(self) -> int:
-        return self._quantity
-
-    @quantity.setter
-    def quantity(self, value: int) -> None:
-        if value < 0:
-            raise ValueError("quantity must be >= 0")
-        self._quantity = value
-
-    @property
-    def subtotal(self) -> float:
-        return self.price * self.quantity
-
-class ShoppingCart:
-    def __init__(self, owner: str) -> None:
-        self.owner = owner
-        self._items: dict[str, CartItem] = {}
-
-    @property
-    def owner(self) -> str:
-        return self._owner
-
-    @owner.setter
-    def owner(self, value: str) -> None:
-        cleaned = value.strip()
-        if not cleaned:
-            raise ValueError("owner must be non-empty")
-        self._owner = cleaned
-
-    def add_item(self, item: CartItem) -> None:
-        if item.name in self._items:
-            # Reuses the quantity setter for validation
-            self._items[item.name].quantity += item.quantity
-        else:
-            self._items[item.name] = item
-
-    @property
-    def total_price(self) -> float:
-        return sum(item.subtotal for item in self._items.values())
-```
-
-**Discussion point:**  
-This problem combines internal dictionary composition (from Week A2) with today's validated setters and computed properties. It also demonstrates how one object (`ShoppingCart`) can manipulate another (`CartItem.quantity`) safely through its setter!
-
----
-
-### HW5 (hard) — Cloud Storage Account (Properties + Basic Python Control Flow)
+### 5  — Cloud Storage Account 
 
 **Requirements (text):**
 Create a `CloudStorage` class that manages user storage quotas
