@@ -29,7 +29,7 @@ def test_order_total_after_fixed_discount_correct_amount() -> None:
     order.add(OrderItem("Laptop", 1000.0, 1))
 
     fixed_discount = FixedDiscount(100.0)
-    assert order.total_after(fixed_discount) == 850.0
+    assert order.total_after(fixed_discount) == 900.0
 
 
 def test_order_total_after_discount_works_with_all_types() -> None:
