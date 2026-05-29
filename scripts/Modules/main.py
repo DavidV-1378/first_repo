@@ -3,9 +3,9 @@ import Utils.math_utils as mu
 from Utils.string_utils import shout, whisper
 from Utils.string_utils import *
 from counter import counts_to
-from models import Ledger
-from models import parse_expense
-import models
+from scripts.models_old import Ledger
+from scripts.models_old import parse_expense
+import scripts.models_old as models_old
 
 result: int = mu.add(1,5)
 print(result)
