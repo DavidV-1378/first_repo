@@ -82,7 +82,8 @@ Takes a `username` and `tier` (string). Initial `used_storage` is 0.0.
   - `username`: 
   - `tier`: .
     - Valid tiers are `"free"`, `"pro"`, and `"enterprise"`.
-    - When `tier` is set, also update an internal hidden value `_storage_limit` using a **`match`** statement:
+    - When `tier` is set, also update an internal hidden value `_storage_limit` using a **`match`** st
+    atement:
       - `"free"` -> 5.0
       - `"pro"` -> 100.0
       - `"enterprise"` -> 1000.0

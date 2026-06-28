@@ -182,3 +182,60 @@ class ShoppingCart:
     @property
     def total_price(self) -> float:
         return sum(cart_item.subtotal for cart_item in self.items.values())
+    
+# 5) 
+
+class CloudStorage:
+    def __init__(self, username: str, tier: str):
+        if not username:
+            raise ValueError("Username cannot be empty")
+        self.username = username
+        self._used_storage = 0.0
+        self.tier = tier
+
+    @property
+    def tier(self) -> str:
+        return self._tier
+
+    @tier.setter
+    def tier(self, value: str):
+        match value.lower():
+            case "free":
+                self._storage_limit = 5.0
+            case "pro":
+                self._storage_limit = 100.0
+            case "enterprise":
+                self._storage_limit = 1000.0
+            case _:
+                raise ValueError("Invalid tier")
+        self._tier = value.lower()
+
+    @property
+    def used_storage(self) -> float:
+        return self._used_storage
+
+    @used_storage.setter
+    def used_storage(self, value: float):
+        self._used_storage = value
+
+    @property
+    def storage_limit(self) -> float:
+        return self._storage_limit
+
+    @property
+    def usage_percentage(self) -> float:
+        if self.storage_limit == 0.0:
+            return 0.0
+        return (self.used_storage / self.storage_limit) * 100.0
+
+    def upload_files(self, file_sizes: list[float]):
+        total_size = 0.0
+        for size in file_sizes:
+            if size < 0.0:
+                raise ValueError("File size cannot be negative.")
+            total_size += size
+            
+        if self.used_storage + total_size > self.storage_limit:
+            raise ValueError("Storage limit exceeded.")
+            
+        self.used_storage += total_size

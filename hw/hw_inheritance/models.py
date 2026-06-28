@@ -143,3 +143,39 @@ class Ledger:
     
     def __len__(self):
         return len(self._expenses)
+    
+"""5. Create base class `ReportFormatter` with format method
+
+Subclasses:
+
+- `PlainTextReportFormatter`
+- `CsvReportFormatter`
+- `MarkdownReportFormatter`"""
+
+class ReportFormatter:
+    def format(self, report: LedgerReport) -> str:
+        raise NotImplementedError
+
+
+class PlainTextReportFormatter(ReportFormatter):
+    def format(self, report: LedgerReport) -> str:
+        result = f"Ledger Report (Total: {report.total}, Items: {report.count})"
+        for s in report.summaries:
+            result = f"{result} Category: {s.category} Count: {s.count} Total: {s.total}"
+        return result
+
+
+class CsvReportFormatter(ReportFormatter):
+    def format(self, report: LedgerReport) -> str:
+        result = "category,count,total"
+        for s in report.summaries:
+            result = f"{result} {s.category},{s.count},{s.total}"
+        return result
+
+
+class MarkdownReportFormatter(ReportFormatter):
+    def format(self, report: LedgerReport) -> str:
+        result = f"# Ledger Report Total Items: {report.count} Grand Total: {report.total}"
+        for s in report.summaries:
+            result = f"{result} | {s.category} | {s.count} | {s.total} |"
+        return result

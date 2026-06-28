@@ -284,3 +284,4 @@ class BalancedProgressPolicy():
 
 def progress_scores(log: StudyLog, policies: list[ProgressPolicy]) -> list[float]:
     return [policy.score(log) for policy in policies]
+
