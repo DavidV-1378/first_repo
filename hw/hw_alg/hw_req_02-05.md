@@ -1,6 +1,4 @@
-# Algorithmics Homework — B01–B05
-
-Student-facing assignments for lessons B01 through B05, inclusive. This document contains requirements only: no reference solutions or answer keys. B06 and later lessons are intentionally excluded.
+# Algorithmics Homework — B02-B05
 
 ## Working and submission rules
 
