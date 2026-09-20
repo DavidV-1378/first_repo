@@ -1,1 +1,67 @@
-def test_first_long_word
+from hw_01 import longer_than_five
+from hw_01 import find_first_error
+
+# 3)
+
+def test_longer_than_five_ordinary():
+    assert longer_than_five(["cat", "pigeon", "dog"]) == "pigeon"
+
+
+def test_longer_than_five_empty():
+    assert longer_than_five([]) is None
+
+
+def test_longer_than_five_first_match():
+    assert longer_than_five(["pineapple", "watermelon", "grapefruit"]) == "pineapple"
+
+
+def test_longer_than_five_later_match():
+    assert longer_than_five(["dog", "cat", "elephant"]) == "elephant"
+
+
+def test_longer_than_five_no_match():
+    assert longer_than_five(["apple", "pear", "grape"]) is None
+
+###
+
+# 5)
+
+def test_find_first_error_ordinary():
+    ordinary_logs = [
+        ("10:00", "INFO", "Start"),
+        ("10:01", "ERROR", "Timeout"),
+        ("10:02", "INFO", "End"),
+    ]
+    assert find_first_error(ordinary_logs) == ((1, ("10:01", "ERROR", "Timeout")), 2)
+
+
+def test_find_first_error_empty():
+    assert find_first_error([]) == (None, 0)
+
+
+def test_find_first_error_first_error():
+    first_error_logs = [
+        ("10:00", "ERROR", "Crash immediately"),
+        ("10:01", "INFO", "Running"),
+    ]
+    assert find_first_error(first_error_logs) == ((0, ("10:00", "ERROR", "Crash immediately")), 1)
+
+
+def test_find_first_error_later_error():
+    later_error_logs = [
+        ("10:00", "INFO", "A"),
+        ("10:01", "WARN", "B"),
+        ("10:02", "INFO", "C"),
+        ("10:03", "ERROR", "D"),
+    ]
+    assert find_first_error(later_error_logs) == ((3, ("10:03", "ERROR", "D")), 4)
+
+
+def test_find_first_error_no_error():
+    no_error_logs = [
+        ("10:00", "INFO", "Boot"),
+        ("10:01", "WARN", "High memory"),
+    ]
+    assert find_first_error(no_error_logs) == (None, 2)
+
+###
