@@ -44,7 +44,7 @@ def merge_sorted_sequences(left_values: list[int], right_values: list[int]) -> l
         if left_values[left] <= right_values[right]:
             merged_values.append(left_values[left])
             left += 1
-        else
+        else:
             merged_values.append(right_values[right])
             right += 1
     while right < len(right_values):

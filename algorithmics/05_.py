@@ -11,7 +11,7 @@ values = [1, 3, 4, 6, 8, 10]
 target = 12
 
 # Given an soreted list and a target, return the indexes of two different values, whose sum equals
-#the target.
+# the target.
 
 #   L = 0,  R = 5
 # values[L] = 1, values[R] = 10
