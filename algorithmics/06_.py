@@ -38,7 +38,7 @@ def max_windows_sum(values: list[int], size:int) -> int:
     for index in range(size):
         current += values[index]
     largest = current
-    for right in range(size, len[values]):
+    for right in range(size, len([values])):
         current += values[right] - values[right - size]
         if current > largest:
             largest = current

@@ -18,7 +18,7 @@ def shortest_range_at_least(values: list[int], target: int) -> int|None:
     
     left = 0 
     current = 0
-    best: int|None = None
+    best: int|None = 0
     
     for right, value in enumerate(values):
         current += value
@@ -77,7 +77,7 @@ def lonegst_unique_sub_string(text: str) -> str:
         sub_strings[charcter] = right
         if right - left + 1 > best:
             best = right - left + 1
-    return best
+    return f"{best}"
     
 
 # Do any two diffrent positons in a list sum to the target?
@@ -88,7 +88,3 @@ def pair_exists(values: list[int], target: int) -> bool:
             if values[first] + values[second] == target:
                 return True
     return False
-    
-    
-def pair_exists_hash(values: list[int], target: int) -> bool:
-    
